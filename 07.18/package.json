@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "start": "node 1_index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
