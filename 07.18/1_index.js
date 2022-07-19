@@ -34,24 +34,23 @@ const http = require("http");
 // ㅜ http 객체 안에 createServer 함수를 사용해서 서버를 만듬
 // ㅜ 함수를 실행시키는데 변수에 담는다는 것은 반환값이 있다는 것
 const server = http.createServer((req, res) => {
+  // ㅜ req 요청값 (http에서 ok를 나타내는 번호가 200번)
+  req.statusCode = 200;
+  // http 상태 코드
+  // 100번대: 정보 응답
+  // 200번대: 성공 응답
+  // 300번대: 리다이렉션 메세지, 요청한 URL이 변경되었을 때
+  // 400번대: 클라이언트상의 오류
+  // 500번대: 서버 오류 응답
 
-    // ㅜ req 요청값 (http에서 ok를 나타내는 번호가 200번)
-    req.statusCode = 200;
-    // http 상태 코드
-    // 100번대: 정보 응답
-    // 200번대: 성공 응답
-    // 300번대: 리다이렉션 메세지, 요청한 URL이 변경되었을 때
-    // 400번대: 클라이언트상의 오류
-    // 500번대: 서버 오류 응답
-    
-    // ㅜ write 문자를 보내주는 함수
-    res.write('123');
-    res.end('456');
+  // ㅜ write 문자를 보내주는 함수
+  res.write("123");
+  res.end("456");
 });
 
 const PORT = 3000;
 server.listen(PORT, () => {
-    console.log('port: ', PORT);
+  console.log("port: ", PORT);
 });
 
 // server 객체의 준비가 되면 listen 함수로 해당 포트에 웹 서버를 대기시킨다.
@@ -87,3 +86,5 @@ server.listen(PORT, () => {
 // nvm install v해당 버전: node의 변경할 버전 설치
 // nvm use v바꿀 버전: node의 설치된 버전을 적용
 // state 오류가 발생할 때는 cmd를 관리자 권한으로 실행해야 한다.
+
+// 07 19 19 수정
