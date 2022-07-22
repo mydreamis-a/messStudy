@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon src/2_main.js",
+    "start": "nodemon src/3_main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -13,6 +13,9 @@
     "prettier": "^2.7.1"
   },
   "dependencies": {
+    "body-parser": "^1.20.0",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
     "mysql2": "^2.3.3"
   }
 }
