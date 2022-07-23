@@ -86,7 +86,7 @@ server.listen(PORT, () => {
 // 경로 확인: node 띄고 tap
 // 실행: node src/2_main.js
 
-// npdemon: 자동으로 모디터링 해서 js의 내용이 변경되면 서버를 재시작해주는 툴
+// nodemon: 자동으로 모디터링 해서 js의 내용이 변경되면 서버를 재시작해주는 툴
 
 // nodemon 설치 명령어
 // npm install --save-dev nodemon

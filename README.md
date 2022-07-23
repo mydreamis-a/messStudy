@@ -1,10 +1,15 @@
 # messStudy
 
 ##### 07 18 월/ NODE.JS 시작
-##### http/ require/ server/ port/ listen/ glitch/ nvm/ npm
+##### http/ require/ createServer/ statusCode/ listen/ PORT/ glitch/ nvm/ npm scripts/ package.json
 
 ##### 07 19 화/ 설치 및 설정
-##### NPM/ formatting/ linting/ MYSQL
+##### package-lock.json/ node_modules/ .prettierrc/ settings.json/ formatting/ Prettier/ Linting/ ESLint/ air bnb/ ts-check/ MySQL Workbench
 
-##### 07 21 수/ MYSQL과 NODE.JS
-##### query/ req/ res
+##### 07 20 수/ NODE.JS와 MYSQL
+##### mysql2/ createConnection
+
+##### 07 21 목/ HTTP와 MYSQL
+##### query/ setHeader/ url/ nodemon
+
+#### 07 22 금/

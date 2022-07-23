@@ -29,7 +29,7 @@ const mysql = require("mysql2");
 const ejs = require("ejs");
 const fs = require("fs");
 const bodyParser = require("body-parser");
-const { log } = require("console");
+// const { log } = require("console");
 
 const app = express();
 const PORT = 4000;
@@ -91,12 +91,6 @@ app.post("/insert", (req, res) => {
     res.redirect("/");
   });
 });
-
-// const deleteBtn = document.querySelector("#delete-btn");
-// // console.log(document.querySelectorAll("button"));
-// deleteBtn.addEventListener(() => {
-//   // const sql = "DELETE FROM products WHERE (`id` = '1');";
-// });
 
 app.listen(PORT, () => {
   console.log("server start");
