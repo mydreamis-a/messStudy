@@ -63,18 +63,18 @@ app.use(
 app.get("/", (req, res) => {
   // ㅜ fs 모듈로 파일을 읽어온다.
   // ㅜ readFile 파일을 읽어오는 함수 (파일 경로, 인코딩 방식, 콜백 함수)
-  fs.readFile("src/4_list.html", "utf-8", (err, data) => {
+  fs.readFile("src/2_list.html", "utf-8", (err, data) => {
     temp.query("SELECT * FROM products", (err, result) => {
       // ㅜ express에서는 end가 아닌 send로 보내기
-      // ㅜ ejs render 함수로 불러온 파일을 그려준다.
-      // ㅜ ejs 두 번째 매개 변수로 데이터를 전달할 수 있다.
+      // ㅜ ejs.render 함수로 불러온 파일을 그려준다.
+      // ㅜ 두 번째 매개 변수로 데이터를 전달할 수 있다.
       res.send(ejs.render(data, { result }));
     });
   });
 });
 
 app.get("/insert", (req, res) => {
-  fs.readFile("src/5_insert.html", "utf-8", (err, data) => {
+  fs.readFile("src/3_insert.html", "utf-8", (err, data) => {
     console.log(data);
     res.send(data);
   });
@@ -92,6 +92,15 @@ app.post("/insert", (req, res) => {
   });
 });
 
+function deleteRow() {
+  app.post("/", (req, res) => {
+    const sql = "DELETE products WHERE (`id` = '" + idx + 1 + "')";
+    temp.query(sql);
+    res.redirect("/");
+  });
+}
 app.listen(PORT, () => {
   console.log("server start");
 });
+
+// 07 24 01 수정

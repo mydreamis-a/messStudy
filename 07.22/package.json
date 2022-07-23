@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon src/2_main.js",
+    "start": "nodemon src/1_main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
