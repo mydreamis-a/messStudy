@@ -92,13 +92,21 @@ app.post("/insert", (req, res) => {
   });
 });
 
-function deleteRow() {
-  app.post("/", (req, res) => {
-    const sql = "DELETE products WHERE (`id` = '" + idx + 1 + "')";
-    temp.query(sql);
+app.get("/delete/:id", (req, res) => {
+  const sql = "DELETE FROM products WHERE id= ?";
+  temp.query(sql, [req.params.id], () => {
     res.redirect("/");
   });
-}
+});
+
+// function deleteRow() {
+//   app.post("/", (req, res) => {
+//     const sql = "DELETE products WHERE (`id` = '" + idx + 1 + "')";
+//     temp.query(sql);
+//     res.redirect("/");
+//   });
+// }
+
 app.listen(PORT, () => {
   console.log("server start");
 });

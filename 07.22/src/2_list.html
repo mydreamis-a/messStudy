@@ -26,8 +26,10 @@
     </tr>
     <% result.forEach((el, idx)=> { %>
       <tr>
-        <td><button type="button" id=<%="delete-btn" +idx %>>삭제</button></td>
-        <td><button type="button" id=<%="update-btn" +idx %>>수정</button></td>
+        <td><a href="/delete/<%= el.id %>">삭제</a></td>
+        <td><a href="">수정</a></td>
+        <!-- <td><button type="button" id=<%="delete-btn" +idx %>>삭제</button></td>
+        <td><button type="button" id=<%="update-btn" +idx %>>수정</button></td> -->
         <td>
           <%= el.id %>
         </td>
@@ -45,12 +47,12 @@
   </table>
 </body>
 <script>
-  const deleteBtns = document.querySelectorAll("button");
-  deleteBtns.forEach((el, idx) => {
-    el.addEventListener("click", () => {
-      deleteRow();
-    })
-  })
+  // const deleteBtns = document.querySelectorAll("button");
+  // deleteBtns.forEach((el, idx) => {
+  //   el.addEventListener("click", () => {
+  //     deleteRow();
+  //   })
+  // })
 </script>
 
 </html>
