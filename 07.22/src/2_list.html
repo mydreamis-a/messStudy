@@ -26,9 +26,9 @@
     </tr>
     <% result.forEach((el, idx)=> { %>
       <tr>
-        <!-- <td><a href="/delete/<%= el.id %>">삭제</a></td> -->
-        <td><button type="button" class="delete-btn">삭제</button></td>
-        <td><a href="">수정</a></td>
+        <td><a href="/delete/<%= el.id %>">삭제</a></td>
+        <td><a href="/edit/<%= el.id %>">수정</a></td>
+        <!-- <td><button type="button" class="delete-btn">삭제</button></td> -->
         <td class="idx">
           <%= el.id %>
         </td>
