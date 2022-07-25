@@ -26,11 +26,10 @@
     </tr>
     <% result.forEach((el, idx)=> { %>
       <tr>
-        <td><a href="/delete/<%= el.id %>">삭제</a></td>
+        <!-- <td><a href="/delete/<%= el.id %>">삭제</a></td> -->
+        <td><button type="button" class="delete-btn">삭제</button></td>
         <td><a href="">수정</a></td>
-        <!-- <td><button type="button" id=<%="delete-btn" +idx %>>삭제</button></td>
-        <td><button type="button" id=<%="update-btn" +idx %>>수정</button></td> -->
-        <td>
+        <td class="idx">
           <%= el.id %>
         </td>
         <td>
@@ -46,13 +45,29 @@
       <% }); %>
   </table>
 </body>
+<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script>
-  // const deleteBtns = document.querySelectorAll("button");
-  // deleteBtns.forEach((el, idx) => {
-  //   el.addEventListener("click", () => {
-  //     deleteRow();
-  //   })
-  // })
+  const deleteBtns = document.querySelectorAll('.delete-btn');
+  deleteBtns.forEach((el) => {
+    el.addEventListener("click", () => {
+      const idx = el.parentElement.parentElement.querySelector('.idx').innerHTML;
+      
+      $.ajax({
+      type: "POST", //요청 메소드 방식
+      url:"/delete",
+      data:{idx},
+      success : function(_result){
+        console.log('완료');
+        window.location.reload();
+      },
+      error : function(a, b, c){
+        console.log('망함');
+      }
+    });
+    })
+  })
+
+
 </script>
 
 </html>

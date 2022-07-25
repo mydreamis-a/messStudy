@@ -86,29 +86,29 @@ app.post("/insert", (req, res) => {
   const data = req.body;
 
   const sql = "INSERT INTO products (name, number, series) VALUES (?, ?, ?)";
-  temp.query(sql, [data.name, data.number, data.series], () => {
+  temp.query(sql, [req.body.name, data.number, data.series], () => {
     // ㅜ redirect 함수의 매개 변수의 경로로 URL을 이동한다.
     res.redirect("/");
   });
 });
 
-app.get("/delete/:id", (req, res) => {
+// app.get("/delete/:id", (req, res) => {
+//   const sql = "DELETE FROM products WHERE id= ?";
+//   temp.query(sql, [req.params.id], () => {
+//     res.redirect("/");
+//   });
+// });
+
+app.post("/delete", (req, res) => {
   const sql = "DELETE FROM products WHERE id= ?";
-  temp.query(sql, [req.params.id], () => {
+  console.log(req.body.idx);
+  temp.query(sql, [req.body.idx], () => {
     res.redirect("/");
   });
 });
-
-// function deleteRow() {
-//   app.post("/", (req, res) => {
-//     const sql = "DELETE products WHERE (`id` = '" + idx + 1 + "')";
-//     temp.query(sql);
-//     res.redirect("/");
-//   });
-// }
 
 app.listen(PORT, () => {
   console.log("server start");
 });
 
-// 07 24 01 수정
+// 07 25 11 수정
