@@ -105,17 +105,16 @@ app.post("/insert", (req, res) => {
 });
 
 app.get("/delete/:id", (req, res) => {
-  // req 요청의 값을 이용해서 URL 요청에서 파라미터를 뽑을 수 있다.
-  // 요청한 URL의 /:id가 vaule이자 params의 키값
-  // /delete/:id 이 주소의 id가 키 값, 그 자리에 들어가는 값이 value
-  // {params: {id:1}}
-
-  // AUTO_INCREMENT: 컬럼을 추가할 때마다 id의 값이 자동으로 증가하면서 생성되는데 그 값이 남아 있음
+  // ㅗ URL 요청하면 req 요청의 값을 이용해서 파라미터를 뽑을 수 있다.
+  // ㅗ 요청한 URL의 /:id가 vaule이자 params의 키 값
+  // ㅗ /delete/:id 이 주소의 id가 키 값, 그 자리에 들어가는 값이 value
+  // ㅗ {params: {id:1}}
 
   // UPDATE와 ALTER의 차이
   // 데이터 명령어로서 DB 관계에 저장된 데이터를 수정하는 명령어
   // 데이터의 정의 명령어로서 DB의 관계 구조를 수정하는 명령어
 
+  // ㅜ AUTO_INCREMENT: 컬럼을 추가할 때마다 id의 값이 자동으로 증가하면서 생성되는데 그 값이 남아 있음
   const sql1 = "DELETE FROM products1 WHERE id= ?;";
   const sql2 = "SET @CNT = 0;";
   const sql3 = "UPDATE products1 SET products1.id = @CNT:=@CNT+1;";
@@ -170,4 +169,4 @@ app.listen(PORT, () => {
   log("server start");
 });
 
-// 07 25 11 수정
+// 07 26 07 수정
