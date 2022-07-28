@@ -6,6 +6,12 @@ const { log } = require("console");
 const fs = require("fs");
 const app = express();
 const PORT = 3000;
+const seats = [
+  [0,0,0,1,1,1,1,0,0,0]
+  [0,0,1,1,1,1,1,1,0,0]
+  [0,1,1,1,1,1,1,1,1,0]
+  [1,1,1,1,1,1,1,1,1,1]
+]
 const server = app.listen(PORT, () => {
   log("서버 연결 완료");
 });
@@ -19,4 +25,9 @@ app.get("/reserve", (req, res) => {
 });
 
 const io = socketio(server);
-io.socketio.on();
+io.socketio.on("connection", (socket) => {
+  socket.on("reserve", (data) => {
+    seats[data.y][data.x] = 2;
+  })
+  io.sockets.emit("reserve", (data));
+});
