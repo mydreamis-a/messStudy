@@ -24,7 +24,7 @@ let seats = [
 ];
 
 // ㅜ 웹 서버 생성
-const PORT = 3000;
+const PORT = 3100;
 const app = express();
 const server = app.listen(PORT, () => {
   log(PORT, "번 포트 실행");

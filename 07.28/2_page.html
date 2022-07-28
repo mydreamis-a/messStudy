@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      body {
+        width: 100vw;
+        height: 100vh;
+      }
+      .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: skyblue;
+        width: 500px;
+        height: 500px;
+        border-radius: 20px;
+      }
+      #send {
+        position: fixed;
+        bottom: 0;
+        margin: 10px;
+        width: calc(100% - 20px);
+        box-sizing: border-box;
+        display: flex;
+        background-color: white;
+        border-radius: 20px;
+      }
+      #send #msg {
+        border: 0px;
+        border-radius: 10px;
+        box-sizing: border-box;
+        font-size: large;
+        padding: 10px;
+        width: 90%;
+      }
+      #sendBtn {
+        background-color: royalblue;
+        color: white;
+        font-weight: 900;
+        border-radius: 10px;
+        border: none;
+        box-sizing: border-box;
+        padding: 10px;
+        width: 10%;
+      }
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      #messages li {
+        padding: 5px 10px;
+      }
+      #login {
+        width: 300px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      #main {
+        height: 370px;
+        display: none;
+        overflow-y: auto;
+      }
+      .title {
+        font-weight: 900;
+        text-align: center;
+        font-size: xx-large;
+        padding: 10px;
+      }
+      #rooms {
+        margin: 0 auto;
+        display: block;
+      }
+      .joinText {
+        color: purple;
+      }
+      .leaveText {
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <div class="title">♥ 채팅방 ♥</div>
+      <div id="login">
+        <p>로그인</p>
+        <input type="text" id="userName" />
+        <button id="loginBtn">접속</button>
+      </div>
+      <div id="main">
+        <select id="rooms">
+          <option value="1">1</option>
+          <option value="2">2</option>
+        </select>
+        <ul id="messages"></ul>
+        <div id="send">
+          <input type="text" id="msg" />
+          <button id="sendBtn" s>전송</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    window.addEventListener("load", () => {
+      loginBtn.addEventListener("click", () => {
+        login.style.display = "none";
+        main.style.display = "block";
+        const name = userName.value;
+        let room = rooms.options[rooms.selectedIndex].value;
+        console.log("room" + room);
+        const socket = io.connect();
+        socket.emit("joinRoom", room, name);
+
+        rooms.addEventListener("change", (e) => {
+          console.log(e.target.selectedIndex);
+          socket.emit("leaveRoom", room, name);
+          room = rooms.options[rooms.selectedIndex].value;
+          socket.emit("joinRoom", room, name);
+        });
+
+        socket.on("joinRoom", (room, name) => {
+          messages.innerHTML += `
+                <li class="joinText">
+                    ${name}님, ${room}번 방에 입장하셨습니다.
+                </li>
+                `;
+        });
+
+        socket.on("leaveRoom", (room, name) => {
+          messages.innerHTML += `
+                <li class="leaveText">
+                    ${name}님, ${room}번 방에서 퇴장하셨습니다.
+                </li>
+                `;
+        });
+
+        socket.on("chat", (name, msg) => {
+          messages.innerHTML += `
+                <li>
+                    ${name}: ${msg}
+                </li>
+                `;
+        });
+
+        sendBtn.addEventListener("click", () => {
+          socket.emit("chat", room, name, msg.value);
+          msg.value = "";
+        });
+      });
+    });
+  </script>
+</html>
