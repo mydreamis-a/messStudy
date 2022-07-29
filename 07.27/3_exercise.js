@@ -17,21 +17,19 @@ const server = app.listen(PORT, () => {
 });
 
 app.get("/", (req, res) => {
-  log("메인");
-});
-
-app.get("/reserve", (req, res) => {
   fs.readFile("4_exercise.html", "utf-8", (err, data) => {
     res.send(data);
   });
 });
 
-app.get("/seats", ())
+app.get("/show_all_seats", (req, res) => {
+  res.send(seats);
+});
 
 const io = socketio(server);
-io.sockets.on("connection", (socket) => {
-  socket.on("reserve", (data) => {
+io.on("connection", (socket) => {
+  socket.on("reservation_request", (data) => {
     seats[data.y][data.x] = 2;
-    io.sockets.emit("reserve", data);
+    io.emit("reservation_complete", data);
   });
 });

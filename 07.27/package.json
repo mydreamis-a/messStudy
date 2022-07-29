@@ -1,12 +1,14 @@
 {
   "scripts": {
-    "start": "nodemon 1_app.js",
+    "start": "nodemon 3_exercise.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "express": "^4.18.1",
     "fs": "^0.0.1-security",
-    "nodemon": "^2.0.19",
     "socket.io": "^4.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
   }
 }
