@@ -159,7 +159,6 @@ app.get("/test", (req, res) => {
 
 app.post("/delete", (req, res) => {
   const sql = "DELETE FROM products1 WHERE id= ?";
-  log(req.body.idx);
   temp.query(sql, [req.body.idx], () => {
     res.redirect("/");
   });

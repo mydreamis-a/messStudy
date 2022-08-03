@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>사랑방</title>
     <script src="/socket.io/socket.io.js"></script>
     <style>
       body {
@@ -93,7 +93,7 @@
   </head>
   <body>
     <div class="content">
-      <div class="title">♥ 채팅방 ♥</div>
+      <div class="title">♥ 사랑방 ♥</div>
       <div id="login">
         <p>로그인</p>
         <input type="text" id="userName" />
@@ -101,8 +101,8 @@
       </div>
       <div id="main">
         <select id="rooms">
-          <option value="1">1</option>
-          <option value="2">2</option>
+          <option value="KSJ">김세정 배우님 사랑방</option>
+          <option value="SHJ">서현진 배우님 사랑방</option>
         </select>
         <ul id="messages"></ul>
         <div id="send">
@@ -118,22 +118,21 @@
         login.style.display = "none";
         main.style.display = "block";
         const name = userName.value;
-        let room = rooms.options[rooms.selectedIndex].value;
-        console.log("room" + room);
+        let room = rooms.options[rooms.selectedIndex].innerHTML;
         const socket = io.connect();
         socket.emit("joinRoom", room, name);
 
         rooms.addEventListener("change", (e) => {
-          console.log(e.target.selectedIndex);
+          console.log(e.target.selectedOptions.value);
           socket.emit("leaveRoom", room, name);
-          room = rooms.options[rooms.selectedIndex].value;
+          room = rooms.options[rooms.selectedIndex].innerHTML;
           socket.emit("joinRoom", room, name);
         });
 
         socket.on("joinRoom", (room, name) => {
           messages.innerHTML += `
                 <li class="joinText">
-                    ${name}님, ${room}번 방에 입장하셨습니다.
+                    ${name}님, ${rooms}번 방에 입장하셨습니다.
                 </li>
                 `;
         });
