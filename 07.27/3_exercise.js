@@ -9,11 +9,18 @@ const seats = [
   [0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
   [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-]
-const selectedSeats = new Array();
-const fridaySeats = seats.slice();
-const saturdaySeats = seats.slice();
-const sundaySeats = seats.slice();
+];
+
+let selectedSeats = new Array();
+let fridaySeats = new Array();
+let saturdaySeats = new Array();
+let sundaySeats = new Array();
+
+seats.forEach((el) => {
+  fridaySeats.push(el.slice());
+  saturdaySeats.push(el.slice());
+  sundaySeats.push(el.slice());
+});
 
 const server = app.listen(PORT, () => {
   log("서버 연결 완료");
@@ -28,16 +35,17 @@ app.get("/", (req, res) => {
 
 // ㅜ 요일별 좌석 데이터
 app.get("/show_all_seats/:day", (req, res) => {
-  log(req.params.day)
+  log(req.params.day);
   switch (req.params.day) {
     case "FRI":
-      selectedSeats = fridaySeats.slice();
+      selectedSeats = fridaySeats;
+      // selectedSeats = [...fridaySeats[3]];
       break;
     case "SAT":
-      selectedSeats = saturdaySeats.slice();
+      selectedSeats = saturdaySeats;
       break;
     case "SUN":
-      selectedSeats = sundaySeats.slice();
+      selectedSeats = sundaySeats;
       break;
     default:
       break;

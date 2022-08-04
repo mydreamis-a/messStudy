@@ -1,188 +1,183 @@
 <!DOCTYPE html>
 <html lang="ko">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>안똔 체홉 극장</title>
-  <style>
-    body {
-      height: 100vh;
-      width: 100vw;
-    }
-
-    h1 {
-      text-align: center;
-      color: royalblue;
-    }
-
-    #accessBtn {
-      background-color: royalblue;
-      text-decoration: underline;
-      justify-content: center;
-      border-radius: 30px;
-      align-items: center;
-      text-align: center;
-      font-size: 1.5vw;
-      cursor: pointer;
-      color: white;
-      margin: 0 auto;
-      display: flex;
-      height: 5vh;
-      width: 20vw;
-    }
-
-    #accessBtn:hover {
-      background-color: white;
-      color: royalblue;
-      font-weight: 900;
-    }
-
-    .seatsRow {
-      justify-content: center;
-      margin: 0 auto;
-      display: flex;
-    }
-
-    .seatsColumn {
-      border-radius: 10px;
-      text-align: center;
-      font-weight: 900;
-      font-size: 1.5vw;
-      cursor: pointer;
-      margin: 0.5vw;
-      height: 3vw;
-      opacity: 0;
-      width: 3vw;
-    }
-
-    .enable {
-      background-color: skyblue;
-    }
-
-    .enable:hover {
-      height: 4vw;
-      width: 4vw;
-      margin: 0;
-    }
-
-    .disable {
-      background-color: gray;
-    }
-
-    select {
-      margin: 2vh auto;
-      display: block;
-    }
-  </style>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-</head>
-
-<body>
-  <h1>♥ 안똔 체홉 극장 좌석 예매 ♥</h1>
-  <select id=selectDay>
-    <option value="FRI">금요일</option>
-    <option value="SAT">토요일</option>
-    <option value="SUN">일요일</option>
-  </select>
-  <div id="accessBtn">예매 페이지로 이동하기</div>
-  <div id="seats"></div>
-</body>
-<script>
-  const transitionSecond = 1;
-  $("#accessBtn").css("transition", `${transitionSecond}s`);
-
-  // ㅜ 예매 현황에 대해서 접속한 다른 유저에게도 실시간으로 공유하기
-  const socket = io.connect();
-  socket.on("reservation_complete", (data) => {
-    const $target = $(`div[data-row = "${data.row}"][data-column = "${data.column}"]`);
-    $target.addClass("disable");
-    $target.removeClass("enable");
-  })
-
-  $(window).ready(() => {
-
-    // ㅜ 예매 페이지로 이동하는 버튼을 클릭했을 때
-    $("#accessBtn").on("click", function () {
-      $(this).css("display", "none");
-
-      // ㅜ 선택한 요일의 좌석 데이터 보여주기
-      getSeats($("#selectDay").val());
-      $("#selectDay").change(function () {
-        // $("#seats").html("");
-        // console.log($(this));
-        getSeats($(this).val());
-      })
-
-      // ㅜ 좌석 데이터를 불러오는 주소에 접근하는 함수
-      function getSeats(day) {
-        $.getJSON(
-          `/show_all_seats/${day}`,
-
-          // ㅜ 요청하는 주소가 동일할 경우에 이전의 값을 가져오는 혹시 모를 경우를 방지하기 위해 추가 데이터로 현재 시간을 서버에 전달하기
-          { dummy: new Date().getTime() }, (seats) => {
-
-            // ㅜ 배열의 행만큼 태그 생성하기
-            $.each(seats, (rowIdx, rowElement) => {
-              let columnNum = 1;
-              const $rowElement = $("<div></div>").addClass("seatsRow");
-
-              // ㅜ 배열의 열만큼 태그 생성하기
-              $.each(rowElement, (columnIdx, columnElement) => {
-                const $alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-                const $columnElement = $(`<div></div>`, {
-                  class: "seatsColumn",
-                  "data-row": rowIdx,
-                  "data-column": columnIdx,
-                }).appendTo($rowElement);
-                $rowElement.appendTo($("#seats"));
-                $columnElement.css("transition", `opacity ${transitionSecond}s`);
-
-                // ㅜ 배열의 값에 따라 좌석 번호를 넣고 클래스 적용시키기
-                if (columnElement !== 0) {
-                  $columnElement.html(`${$alphabet[rowIdx]}${columnNum}`);
-                  columnNum++;
-                }
-                if (columnElement === 1) {
-                  $columnElement.addClass("enable");
-                } else if (columnElement === 2) {
-                  $columnElement.addClass("disable");
-                }
-              });
-            });
-
-            // ㅜ 트랜지션 효과를 위해 텀 두기
-            setTimeout(() => {
-              $(".seatsColumn").css("opacity", "1");
-            }, 10);
-          }
-        );
-
-        // ㅜ 예매 가능한 좌석을 클릭했을 때
-        $(".enable").on("click", function () {
-
-          // ㅜ 페이지 접속 이후에 예매되어버린 좌석일 경우에 막기
-          if ($(this).hasClass("disable")) return;
-
-          if (confirm(`해당 ${$(this).text()} 좌석을 예매하시겠습니까?`)) {
-            $(this).addClass("disable");
-            $(this).removeClass("enable");
-
-            const row = $(this).data("row");
-            const column = $(this).data("column");
-            socket.emit("reservation_request", { row, column });
-          }
-        })
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>안똔 체홉 극장</title>
+    <style>
+      body {
+        height: 100vh;
+        width: 100vw;
       }
+
+      h1 {
+        text-align: center;
+        color: royalblue;
+      }
+
+      #accessBtn {
+        background-color: royalblue;
+        text-decoration: underline;
+        justify-content: center;
+        border-radius: 30px;
+        align-items: center;
+        text-align: center;
+        font-size: 1.5vw;
+        cursor: pointer;
+        color: white;
+        margin: 0 auto;
+        display: flex;
+        height: 5vh;
+        width: 20vw;
+      }
+
+      #accessBtn:hover {
+        background-color: white;
+        color: royalblue;
+        font-weight: 900;
+      }
+
+      .seatsRow {
+        justify-content: center;
+        margin: 0 auto;
+        display: flex;
+      }
+
+      .seatsColumn {
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 900;
+        font-size: 1.5vw;
+        cursor: pointer;
+        margin: 0.5vw;
+        height: 3vw;
+        opacity: 0;
+        width: 3vw;
+      }
+
+      .enable {
+        background-color: skyblue;
+      }
+
+      .enable:hover {
+        height: 4vw;
+        width: 4vw;
+        margin: 0;
+      }
+
+      .disable {
+        background-color: gray;
+      }
+
+      select {
+        margin: 2vh auto;
+        display: block;
+      }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  </head>
+
+  <body>
+    <h1>♥ 안똔 체홉 극장 좌석 예매 ♥</h1>
+    <select id="selectDay">
+      <option value="FRI">금요일</option>
+      <option value="SAT">토요일</option>
+      <option value="SUN">일요일</option>
+    </select>
+    <div id="accessBtn">예매 페이지로 이동하기</div>
+    <div id="seats"></div>
+  </body>
+  <script>
+    const transitionSecond = 1;
+    $("#accessBtn").css("transition", `${transitionSecond}s`);
+
+    // ㅜ 예매 현황에 대해서 접속한 다른 유저에게도 실시간으로 공유하기
+    const socket = io.connect();
+    socket.on("reservation_complete", (data) => {
+      const $target = $(`div[data-row = "${data.row}"][data-column = "${data.column}"]`);
+      $target.addClass("disable");
+      $target.removeClass("enable");
     });
-  });
 
-  // ㅜ getJSON 동기로 변경하기
-  $.ajaxSetup({
-    async: false,
-  });
-</script>
+    $(window).ready(() => {
+      // ㅜ 예매 페이지로 이동하는 버튼을 클릭했을 때
+      $("#accessBtn").on("click", function () {
+        $(this).css("display", "none");
 
+        // ㅜ 선택한 요일의 좌석 데이터 보여주기
+        getSeats($("#selectDay").val());
+        $("#selectDay").change(function (e) {
+          $("#seats").html("");
+          getSeats($(this).val());
+        });
+
+        // ㅜ 좌석 데이터를 불러오는 주소에 접근하는 함수
+        function getSeats(day) {
+          $.getJSON(
+            `/show_all_seats/${day}`,
+
+            // ㅜ 요청하는 주소가 동일할 경우에 이전의 값을 가져오는 혹시 모를 경우를 방지하기 위해 추가 데이터로 현재 시간을 서버에 전달하기
+            { dummy: new Date().getTime() },
+            (seats) => {
+              // ㅜ 배열의 행만큼 태그 생성하기
+              $.each(seats, (rowIdx, rowElement) => {
+                let columnNum = 1;
+                const $rowElement = $("<div></div>").addClass("seatsRow");
+
+                // ㅜ 배열의 열만큼 태그 생성하기
+                $.each(rowElement, (columnIdx, columnElement) => {
+                  const $alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+                  const $columnElement = $(`<div></div>`, {
+                    class: "seatsColumn",
+                    "data-row": rowIdx,
+                    "data-column": columnIdx,
+                  }).appendTo($rowElement);
+                  $rowElement.appendTo($("#seats"));
+                  $columnElement.css("transition", `opacity ${transitionSecond}s`);
+
+                  // ㅜ 배열의 값에 따라 좌석 번호를 넣고 클래스 적용시키기
+                  if (columnElement !== 0) {
+                    $columnElement.html(`${$alphabet[rowIdx]}${columnNum}`);
+                    columnNum++;
+                  }
+                  if (columnElement === 1) {
+                    $columnElement.addClass("enable");
+                  } else if (columnElement === 2) {
+                    $columnElement.addClass("disable");
+                  }
+                });
+              });
+
+              // ㅜ 트랜지션 효과를 위해 텀 두기
+              setTimeout(() => {
+                $(".seatsColumn").css("opacity", "1");
+              }, 10);
+            }
+          );
+
+          // ㅜ 예매 가능한 좌석을 클릭했을 때
+          $(".enable").on("click", function () {
+            // ㅜ 페이지 접속 이후에 예매되어버린 좌석일 경우에 막기
+            if ($(this).hasClass("disable")) return;
+
+            if (confirm(`해당 ${$(this).text()} 좌석을 예매하시겠습니까?`)) {
+              $(this).addClass("disable");
+              $(this).removeClass("enable");
+
+              const row = $(this).data("row");
+              const column = $(this).data("column");
+              socket.emit("reservation_request", { row, column });
+            }
+          });
+        }
+      });
+    });
+
+    // ㅜ getJSON 동기로 변경하기
+    $.ajaxSetup({
+      async: false,
+    });
+  </script>
 </html>

@@ -123,7 +123,7 @@
         socket.emit("joinRoom", room, name);
 
         rooms.addEventListener("change", (e) => {
-          console.log(e.target.selectedOptions.value);
+          console.log(e.target.selectedOptions);
           socket.emit("leaveRoom", room, name);
           room = rooms.options[rooms.selectedIndex].innerHTML;
           socket.emit("joinRoom", room, name);
