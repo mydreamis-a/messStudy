@@ -93,15 +93,20 @@
     const transitionSecond = 1;
     $("#accessBtn").css("transition", `${transitionSecond}s`);
 
-    // ㅜ 예매 현황에 대해서 접속한 다른 유저에게도 실시간으로 공유하기
+    // ㅜ 예매 요청 이후의 좌석 현황에 대해서 다른 유저에게 공유하기
     const socket = io.connect();
     socket.on("reservation_complete", (data) => {
-      const $target = $(`div[data-row = "${data.row}"][data-column = "${data.column}"]`);
-      $target.addClass("disable");
-      $target.removeClass("enable");
+
+      // ㅜ 모든 유저가 보고 있는 요일이 아니라 예매가 요청된 요일에 대해서만 클래스가 적용될 수 있게 하기
+      if(data.optionsDay === $("#selectDay").val()) {
+        const $target = $(`div[data-row = "${data.row}"][data-column = "${data.column}"]`);
+        $target.addClass("disable");
+        $target.removeClass("enable");
+      }
     });
 
     $(window).ready(() => {
+
       // ㅜ 예매 페이지로 이동하는 버튼을 클릭했을 때
       $("#accessBtn").on("click", function () {
         $(this).css("display", "none");
@@ -119,8 +124,8 @@
             `/show_all_seats/${day}`,
 
             // ㅜ 요청하는 주소가 동일할 경우에 이전의 값을 가져오는 혹시 모를 경우를 방지하기 위해 추가 데이터로 현재 시간을 서버에 전달하기
-            { dummy: new Date().getTime() },
-            (seats) => {
+            { dummy: new Date().getTime() }, (seats) => {
+
               // ㅜ 배열의 행만큼 태그 생성하기
               $.each(seats, (rowIdx, rowElement) => {
                 let columnNum = 1;
@@ -159,6 +164,7 @@
 
           // ㅜ 예매 가능한 좌석을 클릭했을 때
           $(".enable").on("click", function () {
+
             // ㅜ 페이지 접속 이후에 예매되어버린 좌석일 경우에 막기
             if ($(this).hasClass("disable")) return;
 
@@ -168,7 +174,8 @@
 
               const row = $(this).data("row");
               const column = $(this).data("column");
-              socket.emit("reservation_request", { row, column });
+              const optionsDay = $("#selectDay").val();
+              socket.emit("reservation_request", { row, column, optionsDay });
             }
           });
         }
