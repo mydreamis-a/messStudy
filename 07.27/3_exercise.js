@@ -3,7 +3,7 @@ const express = require("express");
 const { log } = require("console");
 const fs = require("fs");
 const app = express();
-const PORT = 5000;
+const PORT = 5100;
 const server = app.listen(PORT, () => {
   log("서버 연결 완료");
 });
@@ -21,16 +21,23 @@ let saturdaySeats = new Array();
 let sundaySeats = new Array();
 
 const byDaySeats = {
-  "FRI": fridaySeats,
-  "SAT": saturdaySeats,
-  "SUN": sundaySeats
-}
+  FRI: fridaySeats,
+  SAT: saturdaySeats,
+  SUN: sundaySeats,
+};
 
 // ㅜ 배열 안의 배열을 요일별 좌석 예매 현황으로 사용하기 위해 깊은 복사 진행하기
 seats.forEach((el) => {
   fridaySeats.push(el.slice());
   saturdaySeats.push(el.slice());
   sundaySeats.push(el.slice());
+});
+
+// ㅜ 좌석 예매 페이지
+app.get("/", (req, res) => {
+  fs.readFile("4_exercise.html", "utf-8", (err, data) => {
+    res.send(data);
+  });
 });
 
 // ㅜ 요일별 좌석 데이터 보내주기
@@ -43,9 +50,8 @@ app.get("/show_all_seats/:day", (req, res) => {
 const io = socketio(server);
 io.on("connection", (socket) => {
   socket.on("reservation_request", (data) => {
-    const seats = byDaySeats[data.optionsDay];
+    const seats = byDaySeats[data.selectedDay];
     seats[data.row][data.column] = 2;
     io.emit("reservation_complete", data);
   });
 });
-

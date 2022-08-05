@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <!-- <style>
+      body {
+        height: 100vh;
+        width: 100vw;
+      }
+      h1 {
+        color: palevioletred;
+        text-align: center;
+      }
+      h3 {
+        color: palevioletred;
+        text-align: center;
+      }
+      .content {
+        width: 100vw;
+      }
+      ul {
+        justify-content: center;
+        display: flex;
+      }
+      li {
+        list-style-type: none;
+        text-align: center;
+        margin: 1px;
+      }
+      a {
+        text-decoration: none;
+        color: royalblue;
+      }
+      a:hover {
+        color: skyblue;
+      }
+      img {
+        width: 100%;
+      }
+    </style> -->
+  </head>
+  <body>
+    <h1 style="text-align: center">세정's Shop</h1>
+    <div class="content">
+      <ul id="listview" data-role="listview" data-inset="true" data-filter="true">
+        <li data-role="list-divider">products</li>
+        <% products.forEach((el, idx) => { %>
+        <li class="product" data-index="<%= el.index %>">
+          <a href="#">
+            <img src="src/세정 배우님.jpg" alt="" />
+            <h3><%= el.name %></h3>
+            <h3><%= el.price %></h3>
+            <span class="ui-li-count"><%= el.count %></span>
+          </a>
+          <a href="#" data-icon="heart" data-index="<%= el.index %>"></a>
+        </li>
+        <% }); %>
+      </ul>
+    </div>
+  </body>
+  <script>
+    $(document).ready(function () {
+      function changeIcon(target, from, to) {
+        $(target).removeClass(from).addClass(to);
+      }
+
+      function changeCount(index, count) {
+        // $(`li[data-index =${index}] .ui-li-count`).html(count);
+        $(".product").eq(index).find(".ui-li-count").html(count);
+      }
+
+      const socket = io.connect();
+      socket.on("count", (data) => {
+        changeCount(data.index, data.count);
+      });
+
+      $(".product > a[data-icon]").click(function () {
+        let index = $(this).attr("data-index");
+        if ($(this).attr("toggle") !== "off") {
+          socket.emit("cart", parseInt(index));
+          changeIcon(this, "ui-icon-heart", "ui-icon-check");
+          $(this).attr("toggle", "off");
+        } else {
+          if (confirm("구매하시겠습니까?")) {
+            $(this).parent().remove();
+            socket.emit("buy", parseInt(index));
+
+            // ㅜ 해당 태그가 listview 속성인 태그에 listview() 함수를 사용해서 실행할 속성을 매개 변수로 전달
+            $(listview).listview("refresh");
+          } else {
+            socket.emit("return", parseInt(index));
+            changeIcon(this, "ui-icon-check", "ui-icon-heart");
+            $(this).attr("toggle", "on");
+          }
+        }
+      });
+    });
+
+    // ㅜ 아이콘의 클래스 사용
+    // http://www.w3bai.com/ko/jquerymobile/jquerymobile_ref_css.html#gsc.tab=0
+  </script>
+</html>

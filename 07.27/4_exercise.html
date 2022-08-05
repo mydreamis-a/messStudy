@@ -98,10 +98,9 @@
     socket.on("reservation_complete", (data) => {
 
       // ㅜ 모든 유저가 보고 있는 요일이 아니라 예매가 요청된 요일에 대해서만 클래스가 적용될 수 있게 하기
-      if(data.optionsDay === $("#selectDay").val()) {
+      if(data.selectedDay === $("#selectDay").val()) {
         const $target = $(`div[data-row = "${data.row}"][data-column = "${data.column}"]`);
-        $target.addClass("disable");
-        $target.removeClass("enable");
+        $target.removeClass("enable").addClass("disable");
       }
     });
 
@@ -169,13 +168,12 @@
             if ($(this).hasClass("disable")) return;
 
             if (confirm(`해당 ${$(this).text()} 좌석을 예매하시겠습니까?`)) {
-              $(this).addClass("disable");
-              $(this).removeClass("enable");
+              $(this).removeClass("enable").addClass("disable");
 
               const row = $(this).data("row");
               const column = $(this).data("column");
-              const optionsDay = $("#selectDay").val();
-              socket.emit("reservation_request", { row, column, optionsDay });
+              const selectedDay = $("#selectDay").val();
+              socket.emit("reservation_request", { row, column, selectedDay });
             }
           });
         }

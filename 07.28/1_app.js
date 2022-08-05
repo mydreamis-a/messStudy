@@ -23,7 +23,6 @@ const io = socketio(server);
 
 app.get("/", (req, res) => {
   fs.readFile("2_page.html", "utf-8", (err, data) => {
-    log(err);
     res.send(data);
   });
 });
@@ -32,12 +31,14 @@ io.on("connection", (socket) => {
   log(socket);
   log("클라이언트 접속");
   socket.on("joinRoom", (room, name) => {
+    
     // ㅜ 해당 방으로 접속시켜주는 함수
     socket.join(room);
     io.to(room).emit("joinRoom", room, name);
   });
 
   socket.on("leaveRoom", (room, name) => {
+
     // ㅜ 해당 방에서 떠나게 해주는 함수
     socket.leave(room);
     io.to(room).emit("leaveRoom", room, name);
