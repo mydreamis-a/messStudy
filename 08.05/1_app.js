@@ -53,32 +53,36 @@ app.get("/shop", (req, res) => {
 
 let cart = new Array();
 io.on("connection", (socket) => {
-  function onReturn(index) {
-    products[index].count++;
-    // ㅜ delete: 배열의 값을 제거
-    delete cart[index];
 
-    let count = products[index].count;
-    io.emit("count", { index, count });
-  }
-
+  // ㅜ 상품의 재고에서 수량 차감하고 장바구니 배열에 담기
   socket.on("cart", (index) => {
-    products[index].count--;
     cart[index] = {};
     cart[index].index = index;
-
-    let count = products[index].count;
+    
+    products[index].count--;
+    const count = products[index].count;
     io.emit("count", { index, count });
   });
 
+  // ㅜ 구매 완료 시에는 장바구니 배열에서 빈 값으로 변경하기
   socket.on("buy", (index) => {
     delete cart[index];
 
-    let count = products[index].count;
+    const count = products[index].count;
     io.emit("count", { index, count });
   });
 
+  // ㅜ 구매 취소 시에는 변경한 상품의 재고 수량 및 장바구니 배열에 있어서 초기화시키기
   socket.on("return", (index) => {
     onReturn(index);
   });
 });
+
+function onReturn(index) {
+  delete cart[index];
+  // ㅗ delete: 배열의 값을 제거
+  
+  products[index].count++;
+  const count = products[index].count;
+  io.emit("count", { index, count });
+}
