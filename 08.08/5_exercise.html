@@ -124,7 +124,13 @@
     login.addEventListener("click", () => {
       if (!!!userId.value) return;
       if (!!!userPw.value) return;
-      
+
+      async () => {
+        await loadJson().then((result) => {
+          
+        })
+      }
+
       // ㅜ 로그인할 때 필요했던 태그들 안 보이게 하기
       const deleteTags = loginContainer.children;
       for (const key in deleteTags) {
@@ -142,5 +148,14 @@
       const _userId = sessionStorage.getItem("userId");
       welcomeMsgTag.innerHTML = `${_userId}님 환영합니다 !`;
     })
+
+    function loadJson() {
+      return fetch("6_exercise.json")
+      .then((resolve) => resoleve.json())
+      .then((json) => json.userData)
+      .catch((reject) => {
+        log("fail");
+      });
+    }
   </script>
 </html>
