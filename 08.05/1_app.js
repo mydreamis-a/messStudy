@@ -28,16 +28,21 @@ console.log(__dirname + "/image");
 let counter = 0;
 
 // ㅜ 객체로 만들기 위한 생성자 함수
-function Product(name, image, price, count) {
+function Product(name, price, image, count) {
   this.name = name;
-  this.image = image;
   this.price = price;
+  this.image = image;
   this.count = count;
   this.index = counter++;
 }
 
 // ㅜ 동적 할당으로 생성자 함수 사용
-const products = [new Product("사과", "/", 2000, 20), new Product("수박", "/", 2000, 20), new Product("초코바", "/", 2000, 20), new Product("비타민", "/", 2000, 20), new Product("커피", "/", 2000, 20)];
+const products = new Array();
+products.push(new Product("사과", 2000, "세정 배우님.jpg", 20));
+products.push(new Product("수박", 2000, "세정 배우님.jpg", 20));
+products.push(new Product("초코바", 2000, "세정 배우님.jpg", 20));
+products.push(new Product("비타민", 2000, "세정 배우님.jpg", 20));
+products.push(new Product("커피", 2000, "세정 배우님.jpg", 20));
 
 app.get("/", (req, res) => {
   fs.readFile("2_page.html", "utf-8", (err, data) => {
@@ -53,12 +58,12 @@ app.get("/shop", (req, res) => {
 
 let cart = new Array();
 io.on("connection", (socket) => {
-
   // ㅜ 상품의 재고에서 수량 차감하고 장바구니 배열에 담기
   socket.on("cart", (index) => {
     cart[index] = {};
     cart[index].index = index;
-    
+
+    console.log(products);
     products[index].count--;
     const count = products[index].count;
     io.emit("count", { index, count });
@@ -81,7 +86,7 @@ io.on("connection", (socket) => {
 function onReturn(index) {
   delete cart[index];
   // ㅗ delete: 배열의 값을 제거
-  
+
   products[index].count++;
   const count = products[index].count;
   io.emit("count", { index, count });

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인</title>
+    <style>
+      * {
+        padding: 0px;
+        margin: 0px;
+      }
+      body {
+        width: 444px;
+      }
+      #loginContainer {
+        border: 2px solid royalblue;
+        padding: 10px;
+        margin: 10px;
+        width: 400px;
+      }
+      label {
+        text-align: center;
+        font-weight: 900;
+        display: block;
+      }
+      #userId,
+      #userPw {
+        margin: 0 auto 10px auto;
+        display: block;
+        width: 200px;
+      }
+      #login {
+        background-color: royalblue;
+        border: 0px solid black;
+        border-radius: 10px;
+        font-weight: 900;
+        display: block;
+        margin: 0 auto;
+        color: white;
+        width: 100px;
+      }
+      #deleteCookie {
+        background-color: royalblue;
+        border: 0px solid black;
+        border-radius: 10px;
+        font-weight: 900;
+        display: block;
+        margin: 0 auto;
+        color: white;
+        width: 150px;
+      }
+      #advertisement {
+        border: 2px solid royalblue;
+        padding: 10px;
+        margin: 10px;
+        width: 400px;
+      }
+      img {
+        width: 400px;
+      }
+      span {
+        font-weight: 900;
+      }
+      #welcomeMsg {
+        text-align: center;
+        font-weight: 900;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loginContainer">
+      <label for="userId">아이디</label>
+      <input id="userId" type="text" />
+      <label for="userPw">비밀번호</label>
+      <input id="userPw" type="text" />
+      <button id="login">로그인</button>
+    </div>
+    <button id="deleteCookie">쿠키 전체 삭제</button>
+    <div id="advertisement">
+      <img src="/image/서현진 배우님.jpeg" alt="" />
+      <input id="timeClose" type="checkbox" />
+      <span id="timeCloseMsg"></span>
+    </div>
+  </body>
+  <script>
+    // 08 08 월 실습
+    // 1. 로그인 페이지 접속 시 광고 팝업 발생
+    // 2. 팝업 창에 오늘 하루 안 보기 기능 구현
+    // 3. 로그인하면 페이지에 유저 이름 보여주기
+
+    const time = 1;
+    const { log } = console;
+    timeCloseMsg.innerHTML = `${time}시간 동안 안 보기`;
+
+    // ㅜ 쿠키가 있다면 팝업 안 보이게 하기
+    if (document.cookie.match(`(^|;) ?SHJ_addvertisement=([^;]*)(;|$)`)) {
+      advertisement.style.display = "none";
+    }
+
+    // ㅜ 체크 박스를 클릭했을 때
+    timeClose.addEventListener("click", () => {
+      advertisement.style.display = "none";
+
+      // ㅜ 쿠키 생성하기
+      const date = new Date();
+      date.setTime(new Date().getTime() + time * 10 * 1000);
+      document.cookie = `SHJ_addvertisement=SHJ_picture; expires=${date.toUTCString()}; path=/`;
+    });
+
+    // ㅜ 쿠키 전체 삭제 버튼을 클릭했을 때
+    deleteCookie.addEventListener("click", () => {
+      if (!document.cookie) log("no cookie");
+      else {
+        const cookies = document.cookie.split(";");
+        cookies.forEach((el) => {
+          const name = el.split("=")[0];
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1999 00:00:10 GMT;`;
+        });
+      }
+    });
+
+    // ㅜ 로그인 버튼을 클릭했을 때
+    login.addEventListener("click", () => {
+      if (!!!userId.value) return;
+      if (!!!userPw.value) return;
+      
+      // ㅜ 로그인할 때 필요했던 태그들 안 보이게 하기
+      const deleteTags = loginContainer.children;
+      for (const key in deleteTags) {
+        if (Object.hasOwnProperty.call(deleteTags, key)) {
+          deleteTags[key].style.display = "none";
+        }
+      }
+      
+      // ㅜ 로그인한 유저의 아이디와 함께 환영의 메세지 나타내기
+      const welcomeMsgTag = document.createElement("div");
+      sessionStorage.setItem("userId", userId.value);
+      loginContainer.appendChild(welcomeMsgTag);
+      welcomeMsgTag.id = "welcomeMsg";
+
+      const _userId = sessionStorage.getItem("userId");
+      welcomeMsgTag.innerHTML = `${_userId}님 환영합니다 !`;
+    })
+  </script>
+</html>

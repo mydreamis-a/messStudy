@@ -51,10 +51,10 @@
     <div class="content">
       <ul id="listview" data-role="listview" data-inset="true" data-filter="true">
         <li data-role="list-divider">products</li>
-        <% products.forEach((el, idx) => { %>
+        <% products.forEach((el) => { %>
         <li class="product" data-index="<%= el.index %>">
           <a href="#">
-            <img src="src/세정 배우님.jpg" alt="" />
+            <img src="src/<%= el.image %>" alt="" />
             <h3><%= el.name %></h3>
             <h3><%= el.price %></h3>
             <span class="ui-li-count"><%= el.count %></span>
@@ -66,14 +66,14 @@
     </div>
   </body>
   <script>
-    $(document).ready(function () {
+    $(document).ready(() => {
       function changeIcon(target, from, to) {
         $(target).removeClass(from).addClass(to);
       }
 
       function changeCount(index, count) {
         $(`li[data-index =${index}] .ui-li-count`).html(count);
-        console.log($(`li[data-index =${index}] .ui-li-count`));
+        console.log($(`li[data-index = ${index}] .ui-li-count`));
         // $(".product").eq(index).find(".ui-li-count").html(count);
       }
 

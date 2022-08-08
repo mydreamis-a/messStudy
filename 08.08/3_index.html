@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      label,
+      input,
+      a {
+        display: block;
+        width: 200px;
+        margin: 5px;
+      }
+      button {
+        margin: 0px 0px 0px calc(210px - 70px);
+        width: 70px;
+      }
+    </style>
+  </head>
+  <body>
+    <label for="user">이름</label>
+    <input type="text" id="user" />
+    <label for="pw">비밀번호</label>
+    <input type="text" id="pw" />
+    <button id="login">로그인</button>
+    <a href="/4_index.html">이동</a>
+  </body>
+  <script>
+    // 세션
+    // 사용자(브라우저)에서 들어오는 요구를 하나의 상태로 보고 상태를 유지시키는 기술
+    // 사용자가 웹 서버에 접속해 있는 상태 (브라우저 종료 시까지 유지된다.)
+    // ex. 로그인
+
+    // ㅜ 세션에 저장: setItem(키 값, 값)
+    sessionStorage.setItem("myItem", "저장할 데이터");
+    sessionStorage.getItem("myItem");
+
+    // ㅜ 세션의 길이
+    console.log(sessionStorage.length);
+
+    // ㅜ 세션의 키 값 가져오기
+    console.log(sessionStorage.key(0));
+
+    // ㅜ 세션 전체 삭제
+    sessionStorage.clear();
+
+    login.addEventListener("click", () => {
+      sessionStorage.setItem("userData", user.value);
+    });
+  </script>
+</html>
