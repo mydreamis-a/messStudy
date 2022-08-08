@@ -51,15 +51,15 @@
     <div class="content">
       <ul id="listview" data-role="listview" data-inset="true" data-filter="true">
         <li data-role="list-divider">products</li>
-        <% products.forEach((el) => { %>
-        <li class="product" data-index="<%= el.index %>">
+        <% products.forEach((el, idx) => { %>
+        <li class="product" data-index="<%= idx %>">
           <a href="#">
             <img src="src/<%= el.image %>" alt="" />
             <h3><%= el.name %></h3>
             <h3><%= el.price %></h3>
             <span class="ui-li-count"><%= el.count %></span>
           </a>
-          <a href="#" data-icon="heart" data-index="<%= el.index %>"></a>
+          <a href="#" data-icon="heart" data-index="<%= idx %>"></a>
         </li>
         <% }); %>
       </ul>
@@ -73,7 +73,7 @@
 
       function changeCount(index, count) {
         $(`li[data-index =${index}] .ui-li-count`).html(count);
-        console.log($(`li[data-index = ${index}] .ui-li-count`));
+        // console.log($(`li[data-index = ${index}] .ui-li-count`));
         // $(".product").eq(index).find(".ui-li-count").html(count);
       }
 
