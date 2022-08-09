@@ -82,12 +82,12 @@
 
 <body>
   <form id="loginForm" action="/login" method="post">
-  <div id="loginContainer">
-    <label for="userId">아이디</label>
-    <input id="userId" type="text" autocomplete="off" />
-    <label for="userPw">비밀번호</label>
-    <input id="userPw" type="password" autocomplete="off" />
-    <button id="login" type="submit">로그인</button>
+    <div id="loginContainer">
+      <label for="userId">아이디</label>
+      <input id="userId" name="userId" type="text" autocomplete="off" />
+      <label for="userPw">비밀번호</label>
+      <input id="userPw" name="userPw" type="password" autocomplete="off" />
+      <button id="login" type="submit">로그인</button>
   </form>
   </div>
   <button id="deleteCookie">쿠키 전체 삭제</button>
@@ -134,26 +134,16 @@
       });
     }
   });
-  
-  // ㅜ 로그인 버튼을 클릭했을 때
-  login.addEventListener("click", (e) => {
+
+  // ㅜ submit이 발생할 때
+  loginForm.addEventListener("submit", (e) => {
     _login(e);
   })
-
-  // ㅜ 아이디 입력 칸에서 엔터를 클릭했을 때
-  // userId.addEventListener("keydown", (e) => {
-  //   if (e.key === "Enter") _login(e);
-  // })
-
-  // // ㅜ 비밀번호 입력 칸에서 엔터를 클릭했을 때
-  // userPw.addEventListener("keydown", (e) => {
-  //   if (e.key === "Enter") _login(e);
-  // })
 
   // ㅜ 로그인을 시도할 때에 대한 함수
   function _login(e) {
     e.preventDefault();
-
+    e.stopPropagation();
     if (!!!userId.value) return;
     if (!!!userPw.value) return;
 
@@ -168,15 +158,13 @@
       userData.some((el) => {
         if (userId.value === el.userId) {
           if (userPw.value === el.userPw) {
-            
-           log(e.target)
-           loginForm.submit()
+             e.target.submit();
 
             // ㅜ 로그인할 때 필요했던 태그들 안 보이게 하기
             const deleteTags = loginContainer.children;
             for (const key in deleteTags) {
               if (Object.hasOwnProperty.call(deleteTags, key)) {
-                deleteTags[key].style.visibility = "hidden";
+                deleteTags[key].style.display = "none";
               }
             }
 
@@ -194,8 +182,6 @@
         else alert("아이디를 다시 확인해주세요.");
       });
     })();
-    // console.log('나옴')
-    // loginForm.submit();
   }
 
   function loadJson() {

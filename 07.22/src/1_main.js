@@ -24,13 +24,12 @@
 // body-parser 설치 명령어
 // npm i body-parser
 
+const bodyParser = require("body-parser");
 const express = require("express");
+const { log } = require("console");
 const mysql = require("mysql2");
 const ejs = require("ejs");
 const fs = require("fs");
-const bodyParser = require("body-parser");
-const { log } = require("console");
-
 const app = express();
 const PORT = 4000;
 

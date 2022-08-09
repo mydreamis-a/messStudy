@@ -74,7 +74,7 @@ app.post("/login", (req, res) => {
     key,
     {
       expiresIn: "5m",
-      issuer: "SHJ",
+      issuer: "J",
     }
   );
 
