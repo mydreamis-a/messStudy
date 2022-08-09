@@ -15,7 +15,7 @@ const fs = require("fs");
 const app = express();
 const PORT = 3000;
 const server = app.listen(PORT, () => {
-  log("대기 상태");
+  log("localhost:", PORT);
 });
 
 // ㅜ socketio 생성 및 실행
@@ -28,23 +28,21 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  log(socket);
   log("클라이언트 접속");
-  socket.on("joinRoom", (room, name) => {
-    
+  socket.on("joinRoom", (chatRoom, _userName) => {
     // ㅜ 해당 방으로 접속시켜주는 함수
-    socket.join(room);
-    io.to(room).emit("joinRoom", room, name);
+    socket.join(chatRoom);
+    io.to(chatRoom).emit("joinRoom", chatRoom, _userName);
   });
 
-  socket.on("leaveRoom", (room, name) => {
-
+  socket.on("leaveRoom", (chatRoom, name) => {
     // ㅜ 해당 방에서 떠나게 해주는 함수
-    socket.leave(room);
-    io.to(room).emit("leaveRoom", room, name);
+    socket.leave(chatRoom);
+    io.to(chatRoom).emit("leaveRoom", rchatRoomoom, _userName);
   });
-  socket.on("chat", (room, name, msg) => {
-    io.to(room).emit("chat", name, msg);
+
+  socket.on("chat", (chatRoom, _userName, msg) => {
+    io.to(chatRoom).emit("chat", _userName, msg);
   });
 });
 
@@ -60,6 +58,6 @@ io.on("connection", (socket) => {
 // 특정 클라이언트에게 메세지 전송
 // io.to(아이디).emit("이벤트명", 데이터)
 
-// 클라이언트의 접속과 조료
+// 클라이언트의 접속과 종료
 // io.on("connection", (socket) => {})
 // io.on("disconnect", (socket) => {})

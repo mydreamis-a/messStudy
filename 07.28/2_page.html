@@ -11,7 +11,7 @@
         height: 100vh;
         width: 100vw;
       }
-      .content {
+      #chatContent {
         transform: translate(-50%, -50%);
         background-color: skyblue;
         border-radius: 20px;
@@ -69,18 +69,18 @@
         left: 50%;
         top: 50%;
       }
-      #main {
+      #chatMain {
         overflow-y: auto;
         display: none;
         height: 370px;
       }
-      .title {
+      #chatTitle {
         font-size: x-large;
         text-align: center;
         font-weight: 900;
         padding: 10px;
       }
-      #rooms {
+      #chatRooms {
         display: block;
         margin: 0 auto;
         padding: 0px 10px;
@@ -95,17 +95,25 @@
         font-size: small;
         color: gray;
       }
+      #userList {
+        border: 2px solid skyblue;
+        width: 50px;
+        height: 100px;
+      }
     </style>
   </head>
   <body>
-    <div class="content">
-      <div class="title">♥ 사랑방 ♥</div>
+    <ul id="userList">
+      현재 참여 중인 유저 목록
+    </ul>
+    <div id="chatContent">
+      <div id="chatTitle">♥ 사랑방 ♥</div>
       <div id="login">
         <p>로그인</p>
         <input type="text" id="userName" autocomplete="off" placeholder="닉네임을 입력하세요" />
         <button id="loginBtn">접속</button>
       </div>
-      <div id="main">
+      <div id="chatMain">
         <select id="chatRooms">
           <option value="KSJ">김세정 배우님 사랑방</option>
           <option value="SHJ">서현진 배우님 사랑방</option>
@@ -113,7 +121,7 @@
         <ul id="messages"></ul>
         <div id="send">
           <input type="text" id="msg" />
-          <button id="sendBtn" s>전송</button>
+          <button id="sendBtn">전송</button>
         </div>
       </div>
     </div>
@@ -125,49 +133,49 @@
       // ㅜ 닉네임을 입력하고 접속 버튼을 클릭했을 때
       loginBtn.addEventListener("click", () => {
         const _userName = userName.value;
-        if (!!_userName) {
-          login.style.display = "none";
-          main.style.display = "block";
+        if (!!!_userName) return;
 
-          let chatRoom = chatRooms.selectedOptions[0].label;
+        login.style.display = "none";
+        main.style.display = "block";
+
+        let chatRoom = chatRooms.selectedOptions[0].label;
+        socket.emit("joinRoom", chatRoom, _userName);
+
+        chatRooms.addEventListener("change", (e) => {
+          socket.emit("leaveRoom", chatRoom, _userName);
+
+          chatRoom = e.target.selectedOptions[0].label;
           socket.emit("joinRoom", chatRoom, _userName);
+        });
 
-          chatRooms.addEventListener("change", (e) => {
-            socket.emit("leaveRoom", chatRoom, _userName);
-            chatRoom = e.target.selectedOptions[0].label;
-            socket.emit("joinRoom", chatRoom, _userName);
-          });
-
-          socket.on("joinRoom", (chatRoom, _userName) => {
-            messages.innerHTML += `
+        socket.on("joinRoom", (chatRoom, _userName) => {
+          messages.innerHTML += `
                   <li class="joinText">
                       ${_userName}님이 ${chatRoom}에 입장하셨습니다.
                   </li>
                   `;
-          });
-  
-          socket.on("leaveRoom", (chatRoom, _userName) => {
-            messages.innerHTML += `
+        });
+
+        socket.on("leaveRoom", (chatRoom, _userName) => {
+          messages.innerHTML += `
                   <li class="leaveText">
                       ${_userName}님이 ${chatRoom}에서 퇴장하셨습니다.
                   </li>
                   `;
-          });
-  
-          socket.on("chat", (_userName, msg) => {
-            messages.innerHTML += `
+        });
+
+        socket.on("chat", (_userName, msg) => {
+          messages.innerHTML += `
                   <li>
                       ${_userName}: ${msg}
                   </li>
                   `;
-          });
-  
-          sendBtn.addEventListener("click", () => {
-            socket.emit("chat", room, name, msg.value);
-            msg.value = "";
-          });
-        }
+        });
 
+        sendBtn.addEventListener("click", () => {
+          socket.emit("chat", chatRoom, _userName, msg.value);
+          msg.value = "";
+        });
       });
     });
   </script>

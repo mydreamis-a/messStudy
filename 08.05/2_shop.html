@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>서현진's Shop</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  </head>
+  <body>
+    <h1 style="text-align: center">Shop - exercise</h1>
+    <div class="content">
+      <ul id="listview" data-role="listview" data-inset="true" data-filter="true">
+        <% products.forEach((el) => { %>
+        <li class="product" data-index="<%= el.index %>">
+          <a href="#">
+            <img src="img/<%= el.image %>" alt="" />
+            <h3><%= el.name %></h3>
+            <h3><%= el.price %></h3>
+            <span class="ui-li-count"><%= el.count %></span>
+          </a>
+          <a href="#" data-icon="heart" data-index="<%= el.index %>"></a>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </body>
+  <script>
+    const { log } = console;
+
+    $(window).ready(() => {
+      const socket = io.connect();
+
+      // ㅜ 상품의 재고 현황에 변경이 필요할 때
+      socket.on("count", (data) => {
+        $(`li[data-index = ${data.idx}] .ui-li-count`).html(data.count);
+      });
+
+      // ㅜ 아이콘을 클릭했을 때
+      $(".product > a[data-icon]").on("click", function () {
+        // ㅜ ejs에서 설정한 값
+        const idx = $(this).attr("data-index");
+
+        // ㅜ 하트 아이콘일 때
+        if ($(this).attr("toggle") !== "off") {
+          $(this).attr("toggle", "off");
+          socket.emit("cart", parseInt(idx));
+          $(this).removeClass("ui-icon-heart").addClass("ui-icon-check");
+        }
+        // ㅜ 체크 아이콘일 때
+        else {
+          if (confirm("구매하시겠습니까?")) {
+            $(this).parent().remove();
+            $(listview).listview("refresh");
+            socket.emit("buy", parseInt(idx));
+          }
+          // ㅜ 취소 버튼을 클릭했을 때
+          else {
+            socket.emit("return", parseInt(idx));
+          }
+          $(this).attr("toggle", "on");
+          $(this).removeClass("ui-icon-check").addClass("ui-icon-heart");
+        }
+      });
+    });
+
+    // ㅜ 아이콘의 클래스 사용
+    // http://www.w3bai.com/ko/jquerymobile/jquerymobile_ref_css.html#gsc.tab=0
+
+    // 08 09 11 수정
+  </script>
+</html>
