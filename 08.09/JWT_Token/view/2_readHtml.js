@@ -1,12 +1,12 @@
 // 08 10 수
 
-// ㅜexpress 라우터 설정
+// ㅜ express 라우터 설정
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 
 router.get("/", (req, res) => {
-  fs.readFile("view/2_page.html", "utf-8", (err, data) => {
+  fs.readFile("view/3_login.html", "utf-8", (err, data) => {
     res.send(data);
   });
 });

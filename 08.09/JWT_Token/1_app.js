@@ -2,13 +2,11 @@
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 
-const createToken = require("./4_token");
-const page = require("./view/3_page");
-const verify = require("./5_verify");
-const jwt = require("jsonwebtoken");
+const createToken = require("./4_createToken");
+const verifyToken = require("./6_verifyToken");
+const readHtml = require("./view/2_readHtml");
 const express = require("express");
 const { log } = require("console");
-const fs = require("fs");
 const app = express();
 const PORT = 4321;
 
@@ -34,19 +32,8 @@ app.use(
 app.use(express.static(__dirname));
 
 // ㅜ 모든 요청에서 사용 (앞에 URL이 있을 경우에는 해당 URL의 요청이 있을 때 사용 가능)
-app.use(page);
+app.use(readHtml);
 app.use(createToken);
 
 // ㅜ 라우터 실행
-app.use("/userView", verify);
-
-// app.get("/", (req, res) => {
-//   if (!req.session.key) {
-//     req.session.key = "SHJdfdfddddd";
-//   }
-//   res.send(`key: ${req.session.key}`);
-// });
-
-// app.get("/shop", (req, res) => {
-//   res.send(`shop- ${req.session.key}`);
-// });
+app.use("/userView", verifyToken);

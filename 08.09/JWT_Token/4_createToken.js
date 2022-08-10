@@ -1,4 +1,3 @@
-// ㅜ express, jsonwebtoken, router, nodemon
 const dot = require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const express = require("express");
@@ -25,7 +24,7 @@ router.post("/login", (req, res) => {
     msg: "토큰 발급 완료",
     token,
   };
-  fs.readFile("view/6_page.html", "utf-8", (err, data) => {
+  fs.readFile("view/5_userView.html", "utf-8", (err, data) => {
     res.send(data);
   });
 });
