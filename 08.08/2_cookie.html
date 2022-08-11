@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cookie</title>
+    <style>
+      label,
+      input {
+        display: block;
+        width: 200px;
+        margin: 5px;
+      }
+      button {
+        margin: 0px 0px 0px calc(210px - 50px);
+        width: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <label for="createInputName">쿠키 이름</label>
+    <input type="text" id="createInputName" />
+    <label for="createInputValue">쿠키 값</label>
+    <input type="text" id="createInputValue" />
+    <button id="createBtn">생성</button>
+
+    <label for="searchInputName">쿠키 조회</label>
+    <input type="text" id="searchInputName" />
+    <button id="searchBtn">조회</button>
+    <input type="text" id="cookieValue" readonly />
+
+    <div id="cookies">전체 쿠키 조회</div>
+    <button id="searchAllBtn">전체 조회</button>
+
+    <input type="text" id="checkInputName" />
+    <button id="checkBtn">쿠키 확인</button>
+    
+    <input type="text" id="deleteInputName" />
+    <button id="deleteBtn">삭제</button>
+  </body>
+  <script src="1_app.js"></script>
+  <script>
+
+    // ㅜ 쿠키 생성
+    createBtn.addEventListener("click", () => {
+      const name = createInputName.value;
+      const value = createInputValue.value;
+      if (!!!name) return;
+      if (!!!value) return;
+      createCookie(name, value, 1);
+    });
+
+    // ㅜ 쿠키 조회
+    searchBtn.addEventListener("click", () => {
+      const name = searchInputName.value;
+      if (!!!name) return;
+      cookieValue.value = getCookie(name);
+    });
+
+    // ㅜ 전체 쿠키 조회
+    searchAllBtn.addEventListener("click", () => {
+      cookies.innerHTML = document.cookie;
+    });
+
+    // ㅜ 쿠키 확인
+    checkBtn.addEventListener("click", () => {
+      const name = checkInputName.value;
+      if (!!!name) return;
+      console.log(checkCookie(name));
+    });
+
+    // ㅜ 쿠키 삭제
+    deleteBtn.addEventListener("click", () => {
+      const name = deleteInputName.value;
+      if (!!!name) return;
+      deleteCookie(name);
+    });
+  </script>
+</html>

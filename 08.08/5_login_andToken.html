@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -36,7 +35,7 @@
       width: 200px;
     }
 
-    #login {
+    #loginBtn {
       background-color: royalblue;
       border: 0px solid black;
       border-radius: 10px;
@@ -47,7 +46,7 @@
       width: 100px;
     }
 
-    #deleteCookie {
+    #deleteCookiesBtn {
       background-color: royalblue;
       border: 0px solid black;
       border-radius: 10px;
@@ -87,26 +86,20 @@
       <input id="userId" name="userId" type="text" autocomplete="off" />
       <label for="userPw">비밀번호</label>
       <input id="userPw" name="userPw" type="password" autocomplete="off" />
-      <button id="login" type="submit">로그인</button>
+      <button id="loginBtn" type="submit">로그인</button>
   </form>
   </div>
-  <button id="deleteCookie">쿠키 전체 삭제</button>
+  <button id="deleteCookiesBtn">쿠키 전체 삭제</button>
   <div id="advertisement">
     <img src="img/서현진 배우님.jpeg" alt="" />
-    <input id="timeClose" type="checkbox" />
-    <span id="timeCloseMsg"></span>
+    <input id="closeCheckbok" type="checkbox" />
+    <span id="closeMsg"></span>
   </div>
 </body>
 <script>
-  // 08 08 월 실습
-  // 1. 로그인 페이지 접속 시 광고 팝업 발생
-  // 2. 팝업 창에 오늘 하루 안 보기 기능 구현
-  // 3. JSON 데이터로 로그인 기능 구현
-  // 4. 로그인 시 아이디와 함께 환영 메세지 보여주기
-
   const time = 1;
   const { log } = console;
-  timeCloseMsg.innerHTML = `${time}분 동안 안 보기`;
+  closeMsg.innerHTML = `${time}분 동안 안 보기`;
 
   // ㅜ 쿠키가 있다면 팝업 안 보이게 하기
   if (document.cookie.match(`(^|;) ?SHJ_addvertisement=([^;]*)(;|$)`)) {
@@ -114,7 +107,7 @@
   }
 
   // ㅜ 체크 박스를 클릭했을 때
-  timeClose.addEventListener("click", () => {
+  closeCheckbok.addEventListener("click", () => {
     advertisement.style.display = "none";
 
     // ㅜ 쿠키 생성하기
@@ -124,7 +117,7 @@
   });
 
   // ㅜ 쿠키 전체 삭제 버튼을 클릭했을 때
-  deleteCookie.addEventListener("click", () => {
+  deleteCookiesBtn.addEventListener("click", () => {
     if (!document.cookie) log("no cookie");
     else {
       const cookies = document.cookie.split(";");
@@ -156,8 +149,8 @@
 
       // ㅜ 등록된 데이터와 일치했을 때
       userData.some((el) => {
-        if (userId.value === el.userId) {
-          if (userPw.value === el.userPw) {
+        if (el.id === userId.value) {
+          if (el.pw === userPw.value) {
             
             // ㅜ 로그인할 때 필요했던 태그들 안 보이게 하기
             const deleteTags = loginContainer.children;
@@ -186,7 +179,7 @@
   }
 
   function loadJson() {
-    return fetch("6_exercise.json")
+    return fetch("6_userData.json")
       .then((resolve) => resolve.json())
       .then((json) => json.userData)
       .catch((reject) => {
@@ -194,5 +187,4 @@
       });
   }
 </script>
-
 </html>
