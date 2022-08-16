@@ -18,6 +18,11 @@
 // 따라서 Access Token의 유효 기간이 만료되었을 때 갱신해주는 역할의 Refresh Token으로 유효 기간을 길게 설정해주는데
 // 보통 Access Token이 30분일 경우, Refresh Token은 하루 정도로 설정한다.
 
+// 해커가 Access Token을 얻었을 때는 로그인이 이미 되어 있는 상태가 막기가 힘들기 때문에
+// Access Token의 유효 기간을 짧게 설정하고 Refresh Token을 길게 설정함으로써
+// 이용자가 로그인을 자주 해야 하는 불편함을 보완해주면서도
+// refresh Token을 통해 Access Token을 갱신시키는 역할을
+
 // Access Token + Refresh Token 사용 방식
 // 1. 이용자가 로그인을 시도하면
 // 2. 서버는 이용자 확인 후 JWT 토큰 인증 정보를 payload에 할당하고 생성한다. (입장권) Refresh Token도 생성 후 서버에 저장한다.
@@ -49,23 +54,25 @@ app.use(express.urlencoded({ extended: false }));
 // ㅜ 헤더에 쿠키를 추가하기 위해
 app.use(cookie());
 
-// app.use("/view", express.static("view"));
-
 const user = {
   id: "J",
   pw: "J",
 };
 
 app.get("/", (req, res) => {
+  //
   fs.readFile("view/2_login.html", "utf-8", (err, data) => {
+    //
     log(err);
     res.send(data);
   });
 });
 
 app.post("/login", (req, res) => {
+  //
   const { userId, userPw } = req.body;
   if (userId === user.id && userPw === user.pw) {
+    //
     const accessToken = jwt.sign(
       {
         id: user.id,
@@ -88,13 +95,42 @@ app.post("/login", (req, res) => {
 
     // ㅜ 쿠키의 이름과 유효 시간(1일)을 매개 변수로 전달
     res.cookie("refresh", refreshToken, { maxAge: 24 * 60 * 60 * 1000 });
-    return res.send(accessToken);
+    //
+    fs.readFile("view/2_join.html", "utf-8", (err, data) => {
+      res.send(accessToken + data);
+    });
+    //
   } else return res.send("아이디 혹은 비밀번호 불일치!");
 });
 
 app.post("/refresh", (req, res) => {
+  //
+  // ㅜ req.cookies?.refresh 키 값이 없어도 크래쉬 방지
   if (req.cookies?.refresh) {
+    //
     const refreshToken = req.cookies.refresh;
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY, (err, decode) => {
+      //
+      if (err) {
+        res.send("다시 로그인 해주세요.");
+
+        // ㅜ 정상적인 토큰이면 다시 Access Token 발급
+      } else {
+        const accessToken = jwt.sign(
+          {
+            id: user.id,
+          },
+          process.env.ACCESS_TOKEN_KEY,
+          {
+            expiresIn: "10m",
+          }
+        );
+        //
+        res.send(accessToken);
+      }
+    });
+    //
   } else {
+    res.send(accessToken);
   }
 });
