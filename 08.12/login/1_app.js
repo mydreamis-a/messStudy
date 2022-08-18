@@ -90,52 +90,54 @@ app.post("/login", (req, res) => {
   // ㅜ users 테이블에서 user_id 값으로 검색
   const sql = "SELECT * FROM users WHERE user_id=?";
   client.query(sql, [userId, userPw], (err, result) => {
-    //
+
     // ㅜ 쿼리문이 실행되지 않을 때
-    if (err) res.send("DB 연결 확인 필요");
-    else {
-      // ㅜ 로그인 성공 시 토큰 발급
-      if (result[0]) {
-        //
-        bcrypt.compare(userPw, result[0]?.password, (err, same) => {
-          if (same) {
-            const accessToken = jwt.sign(
-              {
-                // ㅜ 유저 정보
-                userId: result[0].user_id,
-              },
-              process.env.ACCESS_TOKEN,
-              {
-                expiresIn: "5s",
-              }
-            );
-
-            const refreshToken = jwt.sign(
-              {
-                userId: result[0].user_id,
-              },
-              process.env.REFRESH_TOKEN,
-              {
-                expiresIn: "1m",
-              }
-            );
-
-            // ㅜ user 테이블의 user_id 값으로 검색해서 refresh 값을 수정
-            const sql = "UPDATE users SET refresh=? WHERE user_id=?";
-            client.query(sql, [refreshToken, userId]);
-            //
-            req.session.access_token = accessToken;
-            req.session.refresh_token = refreshToken;
-            //
-            res.send({ accessToken, refreshToken });
-          }
-          //
-          else res.send("비밀 번호 오류");
-        });
-      }
-      // ㅜ 아이디가 없거나 비밀번호가 다를 때
-      else res.send("계정이 없습니다.");
+    if (err) {
+      res.send("DB 연결 확인 필요");
+      return;
     }
+    // ㅜ 아이디가 없거나 비밀번호가 다를 때
+    if (!result[0]) {
+      res.send("계정이 없습니다.");
+      return;
+    }
+    // ㅜ 로그인 성공 시 토큰 발급
+    bcrypt.compare(userPw, result[0]?.password, (err, same) => {
+
+      if (!same) {
+        res.send("비밀 번호 오류");
+        return;
+      }
+
+      const accessToken = jwt.sign(
+        {
+          // ㅜ 유저 정보
+          userId: result[0].user_id,
+        },
+        process.env.ACCESS_TOKEN,
+        {
+          expiresIn: "5s",
+        }
+      );
+      const refreshToken = jwt.sign(
+        {
+          userId: result[0].user_id,
+        },
+        process.env.REFRESH_TOKEN,
+        {
+          expiresIn: "1m",
+        }
+      );
+      // ㅜ user 테이블의 user_id 값으로 검색해서 refresh 값을 수정
+      const sql = "UPDATE users SET refresh=? WHERE user_id=?";
+      client.query(sql, [refreshToken, userId]);
+      //
+      req.session.access_token = accessToken;
+      req.session.refresh_token = refreshToken;
+      //
+      res.send({ accessToken, refreshToken });
+      //
+    });
   });
 });
 
@@ -151,46 +153,45 @@ const middleware = (req, res, next) => {
   //
   jwt.verify(access_token, process.env.ACCESS_TOKEN, (err, acc_decoded) => {
     //
-    if (err) {
-      jwt.verify(refresh_token, process.env.REFRESH_TOKEN, (err, ref_decoded) => {
-        //
-        // ㅜ refresh_token이 만료되었을 때
-        if (err) res.send("다시 로그인 해주세요.");
-        else {
-          //
-          const sql = "SELECT * FROM users WHERE user_id=?";
-          client.query(sql, [ref_decoded.userId], (err, result) => {
-            //
-            if (err) res.send("DB 연결 확인 필요");
-            else {
-              //
-              if (result[0].refresh === refresh_token) {
-                //
-                const accessToken = jwt.sign(
-                  {
-                    userId: ref_decoded.userId,
-                  },
-                  process.env.ACCESS_TOKEN,
-                  {
-                    expiresIn: "5s",
-                  }
-                );
-                req.session.access_token = accessToken;
-                //
-                // ㅜ 다음 콜백으로 이동해서 요청 및 응답의 동작을 한다.
-                next();
-              }
-              // ㅜ 서버와 PC의 refresh_token 값이 다를 때
-              else res.send("다시 로그인 해주세요.");
-            }
-          });
-        }
-      });
-    }
-    //
-    else {
+    if (!err) {
       next();
+      return;
     }
+    jwt.verify(refresh_token, process.env.REFRESH_TOKEN, (err, ref_decoded) => {
+      //
+      // ㅜ refresh_token이 만료되었을 때
+      if (err) {
+        res.send("다시 로그인 해주세요.");
+        return;
+      }
+      const sql = "SELECT * FROM users WHERE user_id=?";
+      client.query(sql, [ref_decoded.userId], (err, result) => {
+        //
+        if (err) {
+          res.send("DB 연결 확인 필요");
+          return;
+        }
+        if (result[0].refresh !== refresh_token) {
+          //
+          // ㅜ 서버와 PC의 refresh_token 값이 다를 때
+          res.send("다시 로그인 해주세요.");
+          return;
+        }
+        const accessToken = jwt.sign(
+          {
+            userId: ref_decoded.userId,
+          },
+          process.env.ACCESS_TOKEN,
+          {
+            expiresIn: "5s",
+          }
+        );
+        req.session.access_token = accessToken;
+        //
+        // ㅜ 다음 콜백으로 이동해서 요청 및 응답의 동작을 한다.
+        next();
+      });
+    });
   });
 };
 
