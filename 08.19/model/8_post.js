@@ -12,7 +12,7 @@ class Post extends Sql.Model {
       {
         sequelize,
         timestamps: true,
-        modelName: "post",
+        modelName: "Post",
         tableName: "posts",
         paranoid: false,
         charset: "utf8",

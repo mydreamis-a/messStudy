@@ -8,16 +8,7 @@
     <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
-    작성자 : <%= data.name %>
-    <ul>
-        <% data.posts.forEach(function(post){ %>
-        <li class="item" data-item="<%= post.id %>">
-            <strong class="msg"><%= post.msg %></strong> 
-            <input type="text" class="text"><button class="item-btn">수정</button>
-            <a class="view-btn" href="/del/<%= post.id %>">삭제</a>
-        </li>
-        <% }) %>
-    </ul>
+
 </body>
 <script>
     window.onload = function(){
@@ -36,6 +27,7 @@
                 type: 'post',
                 data: {id, msg , text},
             });
+            location.href = "/user";
         }
       })
     }

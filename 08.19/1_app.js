@@ -34,14 +34,14 @@ app.listen(PORT, () => {
 
 // ㅜ path.join('a', 'b') => a/b
 // ㅜ 매개 변수로 받은 문자열을 주소처럼 합쳐서 문자열 형태로 반환
-// ㅜ 키 값 views 키 값에 렌더링할 파일들을 모아둔 폴더의 주소 저장 (기본 값은 views)
+// ㅜ views 키 값에 렌더링할 파일들을 모아둔 폴더의 주소 저장 (기본 값은 views)
 // ㅜ __dirname: 현재 파일의 경로
 app.set("views", path.join(__dirname, "view"));
 
 // ㅜ html의 뷰 엔진을 ejs 랜더링 방식으로 변경
 app.engine("html", ejs.renderFile);
 
-// ㅜ html 랜더링 시에 뷰 엔진 설정 사용
+// ㅜ html 랜더링에 뷰 엔진 설정
 app.set("view engine", "html");
 
 // ㅜ app.set으로 저장한 값 확인
@@ -84,7 +84,7 @@ app.get("/user", (req, res) => {
   User.findAll({})
     //
     .then((e) => {
-      res.render("3_post", { data: e });
+      res.render("3_page", { data: e });
     })
     .catch(() => {
       res.render("err");
@@ -110,13 +110,20 @@ app.post("/create_post", (req, res) => {
 app.get("/view/:name", (req, res) => {
   User.findOne({
     //
+    // ㅜ 조건문
     where: { name: req.params.name },
+    //
+    // ㅜ 리턴 값을 단일 객체로 변형할 지의 여부 (관계형에서는 사용 주의)
+    // raw: true,
+    //
+    // ㅜ 관계형 모델 불러오기
     include: [{ model: Post }],
     //
   }).then((e) => {
-    e.dataValues.posts = e.dataValues.posts.map((i) => i.dataValues);
+    e.dataValues.Posts = e.dataValues.Posts.map((i) => i.dataValues);
     //
     const posts = e.dataValues;
+    log(posts);
     res.render("4_view", { data: posts });
   });
 });
@@ -124,6 +131,7 @@ app.get("/view/:name", (req, res) => {
 app.post("/view_update", (req, res) => {
   const { id, msg, text } = req.body;
   //
+  // ㅜ ({수정할 내용}, {검색 조건})
   Post.update({ msg: text }, { where: { id, msg } });
 });
 

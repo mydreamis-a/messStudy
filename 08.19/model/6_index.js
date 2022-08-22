@@ -1,7 +1,7 @@
-const config = require("../config/5_config");
-const User = require("./7_users");
-const Post = require("./8_post");
 const Sql = require("sequelize");
+const Post = require("./8_post");
+const User = require("./7_users");
+const config = require("../config/5_config");
 
 // ㅜ 옵션을 적용한 시퀄라이즈 객체 생성
 const { database, username, password } = config.dev;

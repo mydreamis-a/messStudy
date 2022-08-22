@@ -49,7 +49,7 @@ class User extends Sql.Model {
         // ㅜ 기본적으로 적용되는 카멜 표기법에서 스네이크 표기법으로의 변경 여부
         underscored: false,
         //
-        // ㅜ 관계형 구성 시 사용
+        // ㅜ 관계형 구성 시에도 사용
         modelName: "User",
         //
         // ㅜ 보통 모델 이름의 소문자 및 복수형으로 사용
