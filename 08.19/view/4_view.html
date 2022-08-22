@@ -1,35 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>view</title>
-    <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
-</head>
-<body>
-
-</body>
-<script>
-    window.onload = function(){
-        //
-      let items = document.querySelectorAll('.item');
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  </head>
+  <body>
+    작성자 : <%= data.name %>
+    <ul>
+      <% data.Posts.forEach(function(post){ %>
+      <li class="item" data-item="<%= post.id %>">
+        <strong class="msg"><%= post.msg %></strong>
+        <input type="text" class="text" /><button class="item-btn">수정</button>
+        <a class="view-btn" href="/del/<%= post.id %>">삭제</a>
+      </li>
+      <% }) %>
+    </ul>
+  </body>
+  <script>
+    window.onload = function () {
+      //
+      let items = document.querySelectorAll(".item");
       items.forEach((el, index) => {
         //
-        el.querySelector('.item-btn').onclick = function(){
-            //
-            let id = el.dataset.item;
-            let msg = el.querySelector('.msg').innerHTML;
-            let text = el.querySelector('.text').value;
-            //
-            $.ajax({
-                url: '/view_update',
-                type: 'post',
-                data: {id, msg , text},
-            });
-            location.href = "/user";
-        }
-      })
-    }
-</script>
+        el.querySelector(".item-btn").onclick = function () {
+          //
+          let id = el.dataset.item;
+          let msg = el.querySelector(".msg").innerHTML;
+          let text = el.querySelector(".text").value;
+          //
+          $.ajax({
+            url: "/view_update",
+            type: "post",
+            data: { id, msg, text },
+          });
+          location.href = "/user";
+        };
+      });
+    };
+  </script>
 </html>
