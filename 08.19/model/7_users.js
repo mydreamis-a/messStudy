@@ -18,7 +18,7 @@ class User extends Sql.Model {
           allowNull: false,
           //
           // ㅜ 기본 키로의 설정 여부 (중복 불가)
-          // ㅜ 반드시 필요 (기본은 id)
+          // ㅜ 기본적으로 id를 연결 (필수)
           // primaryKey: true,
           //
           // ㅜ 고유 키로의 사용 여부 (중복 불가, 주민 번호, 전화 번호)
