@@ -120,10 +120,10 @@ app.get("/view/:name", (req, res) => {
     include: [{ model: Post }],
     //
   }).then((e) => {
+    log(e);
     e.dataValues.Posts = e.dataValues.Posts.map((i) => i.dataValues);
     //
     const posts = e.dataValues;
-    log(posts);
     res.render("4_view", { data: posts });
   });
 });
