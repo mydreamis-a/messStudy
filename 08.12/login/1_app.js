@@ -45,7 +45,6 @@ app.listen(PORT, () => {
   //
   log("localhost:", PORT);
 });
-
 app.get("/", (req, res) => {
   //
   fs.readFile("view/2_login.html", "utf-8", (err, data) => {
@@ -90,7 +89,6 @@ app.post("/login", (req, res) => {
   // ㅜ users 테이블에서 user_id 값으로 검색
   const sql = "SELECT * FROM users WHERE user_id=?";
   client.query(sql, [userId, userPw], (err, result) => {
-
     // ㅜ 쿼리문이 실행되지 않을 때
     if (err) {
       res.send("DB 연결 확인 필요");
@@ -103,7 +101,6 @@ app.post("/login", (req, res) => {
     }
     // ㅜ 로그인 성공 시 토큰 발급
     bcrypt.compare(userPw, result[0]?.password, (err, same) => {
-
       if (!same) {
         res.send("비밀 번호 오류");
         return;
