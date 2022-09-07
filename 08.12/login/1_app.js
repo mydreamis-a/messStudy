@@ -168,6 +168,7 @@ const middleware = (req, res, next) => {
           res.send("DB 연결 확인 필요");
           return;
         }
+        // ㅜ 동시 접속 시 이전 사용자 로그아웃
         if (result[0].refresh !== refresh_token) {
           //
           // ㅜ 서버와 PC의 refresh_token 값이 다를 때
